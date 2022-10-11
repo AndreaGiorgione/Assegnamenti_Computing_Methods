@@ -74,14 +74,14 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
 
     def numbergen(self, num_gen):
         """Generates a selected number of random values
-        distributed as the given pdf using the pdf (the 
-        inverse of the cpf) 
+        distributed as the given pdf using the pdf (the
+        inverse of the cpf)
 
         Parameters
         ----------
         num_gen : int
             Total number of generated numbers
-        
+
         Return
         ----------
         An array of floats (generated numbers)
