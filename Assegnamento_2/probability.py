@@ -1,6 +1,19 @@
-# Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
-# Everyone is permitted to copy and distribute verbatim copies
-# of this license document, but changing it is not allowed.
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2022 Andrea Giorgione (andreagiorgione98@gmail.com)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """Definition of a class capable of derivate a pdf using some samples
 of the pdf itself and capable of throwing pseudo-random number according
@@ -37,20 +50,10 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
         self.x_min = np.min(x)
         self.x_max = np.max(x)
         self.order = order
+        norm = InterpolatedUnivariateSpline(x, y, k=order).integral(self.x_min, self.x_max)
+        y /= norm
         super().__init__(x, y)
         self.pdf = InterpolatedUnivariateSpline(self.x_array, self.y_array, k=self.order)
-
-    def normalization(self):
-        """Normalization of the pdf rescaling with the
-        value of its integral over the entire support
-
-        Return
-        ----------
-        ProbabilityDensityFunction
-            Normalized pdf
-        """
-        integral = self.pdf.integral(self.x_min, self.x_max)
-        return ProbabilityDensityFunction(self.x_array, self.y_array / integral, self.order)
 
     def probcontent(self, start, finish):
         """Calculate the probability of a number between
@@ -99,7 +102,6 @@ if __name__ == '__main__':
     DEG = 3.
     NUM = 10
     pdf = ProbabilityDensityFunction(x_sample, y_sample, DEG)
-    pdf = pdf.normalization()
     prob_content = pdf.probcontent(0, np.pi / 2)
     genereted_values = pdf.numbergen(NUM)
     print(prob_content)
