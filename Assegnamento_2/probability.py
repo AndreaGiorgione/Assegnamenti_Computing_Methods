@@ -21,6 +21,7 @@ to the given pdf. Also possible to calculate the probability content of
 some intervals in the pdf support
 """
 
+from collections.abc import Sequence
 from matplotlib import pyplot as plt
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
@@ -28,7 +29,7 @@ from scipy.interpolate import InterpolatedUnivariateSpline
 class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
     """Class generating a pdf from a set of values
     """
-    def __init__(self, x, y, order):
+    def __init__(self, x: Sequence, y: Sequence, order: int) -> None:
         '''Initialization of a class using some samples (x,y)
         of some pdf to interpolate the pdf itself. The class
         hold the two array of data, calculate the extremes of
@@ -55,7 +56,7 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
         super().__init__(x, y)
         self.pdf = InterpolatedUnivariateSpline(self.x_array, self.y_array, k=self.order)
 
-    def probcontent(self, start, finish):
+    def probcontent(self, start: float, finish: float) -> float:
         """Calculate the probability of a number between
         two given values (in an interval)
 
@@ -75,7 +76,7 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
         zone_integral = self.pdf.integral(start, finish)
         return zone_integral
 
-    def numbergen(self, num_gen):
+    def numbergen(self, num_gen: int) -> Sequence:
         """Generates a selected number of random values
         distributed as the given pdf using the pdf (the
         inverse of the cpf)
@@ -99,13 +100,13 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
 if __name__ == '__main__':
     x_sample = np.linspace(0.,np.pi, 20)
     y_sample = np.sin(x_sample)
-    DEG = 3.
+    DEG = 3
     NUM = 10
     pdf = ProbabilityDensityFunction(x_sample, y_sample, DEG)
     prob_content = pdf.probcontent(0, np.pi / 2)
-    genereted_values = pdf.numbergen(NUM)
+    generated_values = pdf.numbergen(NUM)
     print(prob_content)
-    print(genereted_values)
+    print(generated_values)
     plt.plot(x_sample, y_sample, 'o')
     plt.plot(x_sample, pdf(x_sample))
     plt.show()
