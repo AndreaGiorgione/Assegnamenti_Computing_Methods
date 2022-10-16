@@ -51,7 +51,7 @@ class testPdf(unittest.TestCase):
         # Verify that the pdf, evaluated on the input x-grid, matches the
         # input y values.
         delta = abs(pdf(x) - y)
-        self.assertTrue((delta < 1e-10).all())
+        self.assertTrue((delta < 1e-12).all())
 
         plt.figure('pdf triangular')
         plt.plot(x, pdf(x))
@@ -73,12 +73,99 @@ class testPdf(unittest.TestCase):
         rnd = pdf.rnd(1000000)
         plt.hist(rnd, bins=200)
 
+    def _test_uniform_base(self, xmin=0., xmax=1.):
+        """Unit test with a uniform distribution.
+        """
+        x = np.linspace(xmin, xmax, 101)
+        y = np.ones(len(x)) / (xmax - xmin)
+        pdf = ProbabilityDensityFunction(x, y, K)
+
+        # Verify that the pdf normalization is one.
+        norm = pdf.integral(xmin, xmax)
+        self.assertAlmostEqual(norm, 1.0)
+        
+        # Verify that the pdf, evaluated on the input x-grid, matches the
+        # input y values.
+        delta = abs(pdf(x) - y)
+        self.assertTrue((delta < 1e-12).all())
+
+        plt.figure('pdf uniform')
+        plt.plot(x, pdf(x))
+        plt.xlabel('x')
+        plt.ylabel('pdf(x)')
+
+        plt.figure('cdf uniform')
+        plt.plot(x, pdf.cdf(x))
+        plt.xlabel('x')
+        plt.ylabel('cdf(x)')
+
+        plt.figure('ppf uniform')
+        q = np.linspace(0., 1., 250)
+        plt.plot(q, pdf.ppf(q))
+        plt.xlabel('q')
+        plt.ylabel('ppf(q)')
+
+        plt.figure('Sampling uniform')
+        rnd = pdf.rnd(1000000)
+        plt.hist(rnd, bins=200)
+
+    def _test_exponential_base(self, xmin=0., xmax=1.):
+        """Unit test with a uexponential distribution.
+        """
+        lamb = 4.
+        x = np.linspace(xmin, xmax, 101)
+        y = lamb * np.exp(-lamb * x)
+        pdf = ProbabilityDensityFunction(x, y, K)
+
+        # Verify that the pdf normalization is one.
+        norm = pdf.integral(xmin, xmax)
+        self.assertAlmostEqual(norm, 1.0)
+        
+        # Verify that the pdf, evaluated on the input x-grid, matches the
+        # input y values.
+        delta = abs(pdf(x) - y)
+        self.assertTrue((delta < 1e-12).all())
+
+        plt.figure('pdf exponential')
+        plt.plot(x, pdf(x))
+        plt.xlabel('x')
+        plt.ylabel('pdf(x)')
+
+        plt.figure('cdf exponential')
+        plt.plot(x, pdf.cdf(x))
+        plt.xlabel('x')
+        plt.ylabel('cdf(x)')
+
+        plt.figure('ppf exponential')
+        q = np.linspace(0., 1., 250)
+        plt.plot(q, pdf.ppf(q))
+        plt.xlabel('q')
+        plt.ylabel('ppf(q)')
+
+        plt.figure('Sampling exponential')
+        rnd = pdf.rnd(1000000)
+        plt.hist(rnd, bins=200)
+
     def test_triangular(self):
         """
         """
         self._test_triangular_base(0., 1.)
         self._test_triangular_base(0., 2.)
         self._test_triangular_base(1., 2.)
+
+    def test_uniform(self):
+        """
+        """
+        self._test_uniform_base(0., 1.)
+        self._test_uniform_base(0., 2.)
+        self._test_uniform_base(1., 2.)
+
+    def test_exponential(self):
+        """
+        """
+        self._test_exponential_base(0., 1.)
+        self._test_exponential_base(0., 2.)
+        self._test_exponential_base(1., 2.)
 
     @unittest.skip('Temporary')
     def test_gauss(self, mu=0., sigma=1., support=10., num_points=500):
