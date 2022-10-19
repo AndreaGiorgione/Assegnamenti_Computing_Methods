@@ -17,7 +17,7 @@ class VoltageData:
 
     @classmethod
     def from_file(cls, data_path):
-        times, voltages = numpy.loadtxt(data_path, unpacks=True)
+        times, voltages = numpy.loadtxt(data_path, unpack=True)
         return cls(times, voltages)
 
     @property
@@ -49,7 +49,7 @@ class VoltageData:
     
     def __repr__(self):
         # return str(self.data)
-        return '\n'.join([f'{row[0]}'for row in self])
+        return '\n'.join([f'{row[1]}'for row in self])
 
     def __call__(self, time):
         return self._spline(time)
@@ -68,12 +68,14 @@ class VoltageData:
         plt.legend()
 
 if __name__ == '__main__':
-    t = [1., 2., 3., 4. , 5., 6.]
-    v = [10., 20., 30., 50., 90., 130.]
-    vdata = VoltageData(t, v)
+    # t = [1., 2., 3., 4. , 5., 6.]
+    # v = [10., 20., 30., 50., 90., 130.]
+    # t, v = numpy.loadtxt('sample_data_file.txt', comments='#', unpack=True)
+    # vdata = VoltageData(t, v)
+    vdata = VoltageData.from_file('sample_data_file.txt')
     print(vdata.times, vdata.voltages)
     print(vdata[0, 0])
-    assert vdata[0, 0] == 1.
+    # assert vdata[0, 0] == 1.
     print(len(vdata))
     for element in vdata:
         print(element)
