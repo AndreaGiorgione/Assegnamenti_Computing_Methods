@@ -13,15 +13,18 @@ def run_tests():
     # Test len()
     assert len(v_data) == len(t)
     
-    # Test the timestamps attribute
+    # Test the voltages attribute
     assert numpy.all(v_data.voltages == v)
     
-    # Test the voltages attribute
+    # Test the timestamps attribute
     assert numpy.all(v_data.timestamps == t)
     
     # Test square parenthesis
     assert v_data[3, 1] == v[3]
     assert v_data[-1, 0] == t[-1]
+
+    # Test square parenthesis for all samples
+    assert [v_data[index, 1] == element for index, element in enumerate(v)]
     
     # Test slicing
     assert numpy.all(v_data[1:5, 1] == v[1:5])
@@ -42,7 +45,10 @@ def run_tests():
     
     # Test interpolation
     v5 = v_data(v_data.timestamps[5])
-    assert abs(v5 - v_data.voltages[5] < 1.e-5)    
+    assert abs(v5 - v_data.voltages[5] < 1.e-5)
+
+    # Test interpolation for all samples
+    assert numpy.all(abs(v_data.voltages - v_data(v_data.timestamps) < 1.e-5))    
    
     # Test plotting
     v_data.plot(fmt='ko', markersize=6, label='normal voltage')
@@ -50,7 +56,6 @@ def run_tests():
     plt.plot(x_grid, v_data(x_grid), 'r-', label='spline')
     plt.legend()
     plt.show()
-
 
 if __name__ == '__main__':
     run_tests()
